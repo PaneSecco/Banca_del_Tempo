@@ -20,24 +20,35 @@ namespace Banca_del_Tempo
     {
         Elenco_Associati lista_associati;
         Banca Banca1;
+        List<Ricevuta> elenco_ricevute;
+
+        string[] tipi_di_categorie = { "Piccoli lavori" , "Trasporto", "Cura di una persona", "Scolastico"};
         public Form1()
         {
             InitializeComponent();
             lista_associati=new Elenco_Associati();
+            elenco_ricevute=new List<Ricevuta>();
 
             string fileName = "lista_associati.json";
             var filetext = File.ReadAllText(fileName);
-            var NEWfiletext = JsonConvert.DeserializeObject<List<Utente>>(filetext);
+            var NEWfiletext1 = JsonConvert.DeserializeObject<List<Utente>>(filetext);
 
-            foreach (Utente persona in NEWfiletext)
+            foreach (Utente persona in NEWfiletext1)
             {
                 lista_associati.Aggiungi_associato(persona);
-                //MessageBox.Show(persona.Nome_Cognome);
             }
 
-            //string json = JsonConvert.SerializeObject(NEWfiletext.ToArray());
-
             Banca1= new Banca(lista_associati);
+
+            fileName = "elenco_ricevute.json";
+            filetext = File.ReadAllText(fileName);
+            var NEWfiletext2 = JsonConvert.DeserializeObject<List<Ricevuta>>(filetext);
+
+            foreach (Ricevuta persona in NEWfiletext2)
+            {
+                elenco_ricevute.Add(persona);
+            }
+
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -59,10 +70,10 @@ namespace Banca_del_Tempo
 
             //oggetti della combobox (3) utili per cambiare il tipo di categoria in cui si può fare una prestazione
 
-            comboBox3.Items.Add("Piccoli lavori");
-            comboBox3.Items.Add("Trasporto");
-            comboBox3.Items.Add("Cura di una persona");
-            comboBox3.Items.Add("Scolastico");
+            foreach(string sezione in tipi_di_categorie)
+            {
+                comboBox3.Items.Add(sezione);
+            }
             comboBox3.DropDownStyle = ComboBoxStyle.DropDownList;
 
             //posiziona come default la scelta "vedi tute le persone iscritte a questa segreteria" e "fai transizione"
@@ -74,13 +85,14 @@ namespace Banca_del_Tempo
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBox2.SelectedItem=="Elimina utente" && listView1.SelectedItems.Count!=0)
+            //se è sulle categorie non fare
+            if (comboBox2.SelectedItem=="Elimina utente" && listView1.SelectedItems.Count!=0 && comboBox1.SelectedItem!="Bilancio categorie")
             {
                 textBox1.Text = listView1.SelectedItems[0].SubItems[0].Text;
                 textBox2.Text = listView1.SelectedItems[0].SubItems[1].Text;
                 textBox3.Text = listView1.SelectedItems[0].SubItems[2].Text;
             }
-            if (comboBox2.SelectedItem == "Ricarica" && listView1.SelectedItems.Count != 0)
+            if (comboBox2.SelectedItem == "Ricarica" && listView1.SelectedItems.Count != 0 && comboBox1.SelectedItem != "Bilancio categorie")
             {
                 textBox1.Text = listView1.SelectedItems[0].SubItems[0].Text;
             }
@@ -104,7 +116,6 @@ namespace Banca_del_Tempo
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             //creazione dei campi pertinenti alla richiesta
-            //MessageBox.Show("è stato selezionato " + comboBox1.SelectedItem.ToString());
 
             if (comboBox1.SelectedItem.ToString() == "Segreteria")
             {
@@ -161,8 +172,28 @@ namespace Banca_del_Tempo
         public void cambia_listview_Bilancio_categorie()
         {
             listView1.Clear();
-            listView1.Columns.Add("Categoria", 100);
+            listView1.Columns.Add("Categoria", 200);
             listView1.Columns.Add("Bilancio", 100);
+
+            Dictionary<string, int> tendenze= new Dictionary<string, int>();
+
+            foreach(string categoria in tipi_di_categorie)
+            {
+                tendenze.Add(categoria, 0);
+            }
+
+            foreach(Ricevuta singolo in elenco_ricevute)
+            {
+                singolo.Restituisci_resoconto(tendenze);
+            }
+
+            int volte=tendenze.Count;
+            for(int i=0; i<volte; i++)
+            {
+                string[] row = { tipi_di_categorie[i], tendenze[tipi_di_categorie[i]].ToString()};
+                var listViewItem = new ListViewItem(row);
+                listView1.Items.Add(listViewItem);
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -172,6 +203,13 @@ namespace Banca_del_Tempo
                 if (Controlla_dati() == true)
                 {
                     Banca1.Transizione(textBox1.Text, textBox2.Text, int.Parse(textBox3.Text));
+                    Ricevuta ricevuta1 = new Ricevuta(textBox1.Text, textBox2.Text, comboBox3.SelectedItem.ToString(), int.Parse(textBox3.Text));
+                    elenco_ricevute.Add(ricevuta1);
+
+                    string fileName = "elenco_ricevute.json";
+                    string json = JsonConvert.SerializeObject(elenco_ricevute);
+                    System.IO.File.WriteAllText(fileName, json);
+
                     cambia_listview_Segreteria();
 
                     //svuoto quello che era stato precedentemente inserito
@@ -228,6 +266,13 @@ namespace Banca_del_Tempo
             if (comboBox2.SelectedItem.ToString() == "Esegui transizione")
             {
                 cambia_listview_Segreteria();
+
+                if(textBox1.Text== textBox2.Text)
+                {
+                    MessageBox.Show("non è possibile effettuare un pagamento tra un utente e il medesimo");
+                    return false;
+                }
+
                 string richiedente=textBox1.Text;
                 string accettatore=textBox2.Text;
                 int ore=int.Parse(textBox3.Text);
@@ -283,25 +328,6 @@ namespace Banca_del_Tempo
             }
             if (comboBox2.SelectedItem.ToString() == "Ricarica")
             {
-                /*  non è utile dato che lo prendo dalla listview
-                string nominativo = textBox1.Text;
-                char[] spearator = { ' ' };
-                string[] strlist = nominativo.Split(spearator);
-
-                bool maiuscola = true;
-                string finale = null;
-
-                foreach (string s in strlist)
-                {
-                    finale = finale + s.Substring(0, 1).ToUpper() + s.Substring(1).ToLower() + " ";
-                }
-
-                finale = finale.Substring(0, finale.Length-2);
-
-                textBox1.Text = finale;
-
-                */
-
                 int ore = int.Parse(textBox3.Text);
                 if(ore<=0)
                 {
@@ -489,6 +515,18 @@ namespace Banca_del_Tempo
         private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            string elenco_completo = null;
+
+            foreach(Ricevuta singola in elenco_ricevute)
+            {
+                elenco_completo+= "\n" + singola.Ricevuta_transizione() + "\n"+ "------------------------------" + "\n";
+            }
+
+            MessageBox.Show(elenco_completo);
         }
     }
 }
