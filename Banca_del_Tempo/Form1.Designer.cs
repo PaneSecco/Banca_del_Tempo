@@ -48,6 +48,7 @@
             // 
             this.listView1.HideSelection = false;
             this.listView1.Location = new System.Drawing.Point(43, 62);
+            this.listView1.MultiSelect = false;
             this.listView1.Name = "listView1";
             this.listView1.Size = new System.Drawing.Size(436, 320);
             this.listView1.TabIndex = 0;
@@ -168,6 +169,7 @@
             this.comboBox3.Name = "comboBox3";
             this.comboBox3.Size = new System.Drawing.Size(121, 21);
             this.comboBox3.TabIndex = 13;
+            this.comboBox3.SelectedIndexChanged += new System.EventHandler(this.comboBox3_SelectedIndexChanged);
             // 
             // Form1
             // 

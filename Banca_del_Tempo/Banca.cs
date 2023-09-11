@@ -66,7 +66,7 @@ namespace Banca_del_Tempo
             string fileName = "lista_associati.json";
             string json = JsonConvert.SerializeObject(segreteria.Associati);
 
-            //write string to file
+            //scrive la stringa su file
             System.IO.File.WriteAllText(fileName, json);
         }
     }

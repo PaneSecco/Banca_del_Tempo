@@ -9,7 +9,9 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using System.IO;
+using System.Text.RegularExpressions;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using static System.Net.Mime.MediaTypeNames;
 
 
 namespace Banca_del_Tempo
@@ -55,26 +57,32 @@ namespace Banca_del_Tempo
             comboBox2.Items.Add("Elimina utente");
             comboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
 
+            //oggetti della combobox (3) utili per cambiare il tipo di categoria in cui si può fare una prestazione
+
+            comboBox3.Items.Add("Piccoli lavori");
+            comboBox3.Items.Add("Trasporto");
+            comboBox3.Items.Add("Cura di una persona");
+            comboBox3.Items.Add("Scolastico");
+            comboBox3.DropDownStyle = ComboBoxStyle.DropDownList;
+
             //posiziona come default la scelta "vedi tute le persone iscritte a questa segreteria" e "fai transizione"
 
             comboBox1.SelectedIndex = 0;
             comboBox2.SelectedIndex = 0;
-
-            /*
-            Button button1 = new Button();
-            Controls.Add(button1);
-            button1.Text = "OK";
-            button1.Bottom = 120;
-            */
+            comboBox3.SelectedIndex = 0;
         }
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBox2.SelectedItem=="Elimina utente")
+            if (comboBox2.SelectedItem=="Elimina utente" && listView1.SelectedItems.Count!=0)
             {
                 textBox1.Text = listView1.SelectedItems[0].SubItems[0].Text;
                 textBox2.Text = listView1.SelectedItems[0].SubItems[1].Text;
                 textBox3.Text = listView1.SelectedItems[0].SubItems[2].Text;
+            }
+            if (comboBox2.SelectedItem == "Ricarica" && listView1.SelectedItems.Count != 0)
+            {
+                textBox1.Text = listView1.SelectedItems[0].SubItems[0].Text;
             }
         }
 
@@ -160,32 +168,202 @@ namespace Banca_del_Tempo
         private void button1_Click(object sender, EventArgs e)
         {
             if (comboBox2.SelectedItem.ToString() == "Esegui transizione")
-            {
-                Banca1.Transizione(textBox1.Text, textBox2.Text, int.Parse(textBox3.Text));
-                cambia_listview_Segreteria();
+            { 
+                if (Controlla_dati() == true)
+                {
+                    Banca1.Transizione(textBox1.Text, textBox2.Text, int.Parse(textBox3.Text));
+                    cambia_listview_Segreteria();
+
+                    //svuoto quello che era stato precedentemente inserito
+                    textBox1.Text = null;
+                    textBox2.Text = null;
+                    textBox3.Text = null;
+                }
             }
             if (comboBox2.SelectedItem.ToString() == "Ricarica")
             {
-                Banca1.Ricarica(textBox1.Text, int.Parse(textBox3.Text));
-                cambia_listview_Segreteria();
+                if (Controlla_dati() == true)
+                {
+                    Banca1.Ricarica(textBox1.Text, int.Parse(textBox3.Text));
+                    cambia_listview_Segreteria();
+                    textBox1.Text = null;
+                    textBox2.Text = null;
+                    textBox3.Text = null;
+                }
             }
             if (comboBox2.SelectedItem.ToString() == "Aggiungi utente")
             {
-                Banca1.Aggiungi_utente(textBox1.Text, textBox2.Text, int.Parse(textBox3.Text));
-                cambia_listview_Segreteria();
+                if (Controlla_dati() == true)
+                {
+                    Banca1.Aggiungi_utente(textBox1.Text, textBox2.Text, int.Parse(textBox3.Text));
+                    cambia_listview_Segreteria();
+                    textBox1.Text = null;
+                    textBox2.Text = null;
+                    textBox3.Text = null;
+                }
             }
             if (comboBox2.SelectedItem.ToString() == "Elimina utente")
             {
-                foreach (Utente persona in Banca1.Segreteria.Associati)
+                if (Controlla_dati() == true)
                 {
-                    if (persona.Nome_Cognome == textBox1.Text)
+                    string nominativo=textBox1.Text;
+                    textBox1.Text = null;
+                    textBox2.Text = null;
+                    textBox3.Text = null;
+                    foreach (Utente persona in Banca1.Segreteria.Associati)
                     {
-                        Banca1.Elimina_utente(persona);
-                        cambia_listview_Segreteria();
-                        return;
+                        if (persona.Nome_Cognome == nominativo)
+                        {
+                            Banca1.Elimina_utente(persona);
+                            cambia_listview_Segreteria();
+                            return;
+                        }
                     }
                 }
             }
+        }
+
+        public bool Controlla_dati()
+        {
+            if (comboBox2.SelectedItem.ToString() == "Esegui transizione")
+            {
+                cambia_listview_Segreteria();
+                string richiedente=textBox1.Text;
+                string accettatore=textBox2.Text;
+                int ore=int.Parse(textBox3.Text);
+
+                //sistemazione del nome del richiedente
+                char[] spearator = { ' ' };
+                string[] strlist = richiedente.Split(spearator);
+
+                bool maiuscola = true;
+                string finale_richi=null;
+
+                int contatore = 0;
+
+                foreach (string s in strlist)
+                {
+                    contatore++;
+                    finale_richi= finale_richi + s.Substring(0, 1).ToUpper() + s.Substring(1).ToLower();
+                    if (contatore != strlist.Length)
+                    {
+                        finale_richi = finale_richi + " ";
+                    }
+                }
+
+                textBox1.Text = finale_richi;
+
+                //sistemazione del nome dell'accettatore
+
+                strlist = accettatore.Split(spearator);
+                maiuscola = true;
+                string finale_acc = null;
+
+                contatore = 0;
+
+                foreach (string s in strlist)
+                {
+                    contatore++;
+                    finale_acc = finale_acc + s.Substring(0, 1).ToUpper() + s.Substring(1).ToLower();
+                    if (contatore != strlist.Length)
+                    {
+                        finale_acc = finale_acc + " ";
+                    }
+                }
+
+                textBox2.Text = finale_acc; 
+
+                if (ore<=0)
+                {
+                    MessageBox.Show("Le ore inserite devono essere superiori a 0");
+                    return false;
+                }
+                return true;
+
+            }
+            if (comboBox2.SelectedItem.ToString() == "Ricarica")
+            {
+                /*  non è utile dato che lo prendo dalla listview
+                string nominativo = textBox1.Text;
+                char[] spearator = { ' ' };
+                string[] strlist = nominativo.Split(spearator);
+
+                bool maiuscola = true;
+                string finale = null;
+
+                foreach (string s in strlist)
+                {
+                    finale = finale + s.Substring(0, 1).ToUpper() + s.Substring(1).ToLower() + " ";
+                }
+
+                finale = finale.Substring(0, finale.Length-2);
+
+                textBox1.Text = finale;
+
+                */
+
+                int ore = int.Parse(textBox3.Text);
+                if(ore<=0)
+                {
+                    MessageBox.Show("Le ore inserite non possono essere negative");
+                    return false;
+                }
+                return true;
+            }
+            if (comboBox2.SelectedItem.ToString() == "Aggiungi utente")
+            {
+                string nominativo = textBox1.Text;
+                string telefono= textBox2.Text;
+                int ore = int.Parse(textBox3.Text);
+
+                //sistemazione del nome del richiedente
+                char[] spearator = { ' ' };
+                string[] strlist = nominativo.Split(spearator);
+
+                bool maiuscola = true;
+                string finale = null;
+
+                int contatore = 0;
+
+                foreach (string s in strlist)
+                {
+                    contatore++;
+                    finale = finale + s.Substring(0, 1).ToUpper() + s.Substring(1).ToLower();
+                    if(contatore!=strlist.Length)
+                    {
+                        finale = finale +" ";
+                    }
+                }
+
+                textBox1.Text = finale;
+
+                //controllo telefono
+
+                string regex = ".*[a-zA-Z].*"; // regex to check if string contains any letters
+
+                bool result = Regex.IsMatch(telefono, regex);
+
+                if (result == true || telefono.Length!= 9)
+                {
+                    MessageBox.Show("il numero di telefono deve contenere solo numeri e deve essere da 9 cifre");
+                    return false;
+                }
+
+                //controllo ore
+
+                if (ore < 3)
+                {
+                    MessageBox.Show("Le ore inserite devono essere superiori o uguali a 3");
+                    return false;
+                }
+
+                return true;
+            }
+            if (comboBox2.SelectedItem.ToString() == "Elimina utente")
+            {
+                return true;
+            }
+            return false;
         }
 
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
@@ -247,7 +425,7 @@ namespace Banca_del_Tempo
 
             textBox1.Visible = true;
             textBox1.Text = null;
-            textBox1.Enabled = true;
+            textBox1.Enabled = false;
 
             textBox2.Visible = false;
 
@@ -306,6 +484,11 @@ namespace Banca_del_Tempo
             textBox3.Text = null;
 
             comboBox3.Visible = false;
+        }
+
+        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
