@@ -26,17 +26,8 @@ namespace Banca_del_Tempo
             foreach(Utente persona in segreteria.Associati){
                 if (persona.Nome_Cognome == richiedente)
                 {
-                    if (persona.Ore< pagamento)
-                    {
-                        MessageBox.Show("Impossibile effettuare il pagamento, le ore necessarie sono maggiori alle ore disponibili del richiedente");
-                        return;
-                    }
                     persona.Diminuisci_Ore(pagamento);
                 }
-            }
-
-            foreach (Utente persona in segreteria.Associati)
-            {
                 if (persona.Nome_Cognome == accettatore)
                 {
                     persona.Aggiungi_Ore(pagamento);

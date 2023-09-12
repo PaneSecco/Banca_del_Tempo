@@ -528,5 +528,10 @@ namespace Banca_del_Tempo
 
             MessageBox.Show(elenco_completo);
         }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
