@@ -36,51 +36,63 @@
             // 
             // comboBox1
             // 
+            this.comboBox1.BackColor = System.Drawing.Color.Azure;
+            this.comboBox1.Cursor = System.Windows.Forms.Cursors.Hand;
             this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(79, 27);
+            this.comboBox1.Location = new System.Drawing.Point(92, 27);
+            this.comboBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(117, 21);
+            this.comboBox1.Size = new System.Drawing.Size(136, 21);
             this.comboBox1.TabIndex = 0;
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // comboBox2
             // 
+            this.comboBox2.BackColor = System.Drawing.Color.Azure;
+            this.comboBox2.Cursor = System.Windows.Forms.Cursors.Hand;
             this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Location = new System.Drawing.Point(212, 27);
+            this.comboBox2.Location = new System.Drawing.Point(247, 27);
+            this.comboBox2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(120, 21);
+            this.comboBox2.Size = new System.Drawing.Size(139, 21);
             this.comboBox2.TabIndex = 1;
             this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
             // 
             // textBox1
             // 
-            this.textBox1.Enabled = false;
-            this.textBox1.Location = new System.Drawing.Point(24, 64);
+            this.textBox1.BackColor = System.Drawing.Color.Azure;
+            this.textBox1.Cursor = System.Windows.Forms.Cursors.Default;
+            this.textBox1.Location = new System.Drawing.Point(28, 64);
+            this.textBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(308, 195);
+            this.textBox1.ReadOnly = true;
+            this.textBox1.Size = new System.Drawing.Size(359, 195);
             this.textBox1.TabIndex = 2;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(21, 30);
+            this.label1.Location = new System.Drawing.Point(24, 30);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(52, 13);
+            this.label1.Size = new System.Drawing.Size(62, 13);
             this.label1.TabIndex = 3;
             this.label1.Text = "Guida su:";
             // 
             // Form2
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(354, 279);
+            this.ClientSize = new System.Drawing.Size(413, 279);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.comboBox2);
             this.Controls.Add(this.comboBox1);
+            this.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "Form2";
-            this.Text = "Form2";
+            this.Text = "Guida";
             this.Load += new System.EventHandler(this.Form2_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -28,7 +28,13 @@ namespace Banca_del_Tempo
         public Form1()
         {
             InitializeComponent();
-            lista_associati=new Elenco_Associati();
+
+            label5.Parent = pictureBox1;
+            label5.BackColor = Color.Transparent;
+
+            this.pictureBox1.SendToBack();
+
+            lista_associati =new Elenco_Associati();
             elenco_ricevute=new List<Ricevuta>();
 
             string fileName = "lista_associati.json";
@@ -138,8 +144,8 @@ namespace Banca_del_Tempo
         public void cambia_listview_Segreteria()
         {
             listView1.Clear();
-            listView1.Columns.Add("Nome & Cognome", 100);
-            listView1.Columns.Add("Telefono", 100);
+            listView1.Columns.Add("Nome & Cognome", 150);
+            listView1.Columns.Add("Telefono", 150);
             listView1.Columns.Add("Bilancio", 100);
 
             int volte = Banca1.Segreteria.Associati.Count;
@@ -154,9 +160,9 @@ namespace Banca_del_Tempo
         public void cambia_listview_Persone_indebitate()
         {
             listView1.Clear();
-            listView1.Columns.Add("Nome & Cognome", 100);
-            listView1.Columns.Add("Telefono", 100);
-            listView1.Columns.Add("Bilancio", 100);
+            listView1.Columns.Add("Nome & Cognome", 150);
+            listView1.Columns.Add("Telefono", 150);
+            listView1.Columns.Add("Bilancio", 150);
 
             int volte = Banca1.Segreteria.Associati.Count;
 
@@ -174,8 +180,8 @@ namespace Banca_del_Tempo
         public void cambia_listview_Bilancio_categorie()
         {
             listView1.Clear();
-            listView1.Columns.Add("Categoria", 200);
-            listView1.Columns.Add("Bilancio", 100);
+            listView1.Columns.Add("Categoria", 250);
+            listView1.Columns.Add("Bilancio", 150);
 
             Dictionary<string, int> tendenze= new Dictionary<string, int>();
 
@@ -449,7 +455,7 @@ namespace Banca_del_Tempo
             label2.Visible = false;
             label3.Visible = false;
             label4.Visible = true;
-            label4.Text = "Aumento ore di prestazioni (le ore verranno addizionate):";
+            label4.Text = "Aumento ore (le ore verranno addizionate):";
 
             textBox1.Visible = true;
             textBox1.Text = null;
@@ -497,7 +503,7 @@ namespace Banca_del_Tempo
             label2.Text = "Telefono";
             label3.Visible = false;
             label4.Visible = true;
-            label4.Text = "Tempo attuale (se meno di 0 si ha un debito da saldare prima dell'uscita):";
+            label4.Text = "Tempo attuale (non possibile se meno di 0):";
 
             textBox1.Visible = true;
             textBox1.Text = null;
@@ -536,6 +542,16 @@ namespace Banca_del_Tempo
             Form2 secondForm = new Form2(tipi_di_viste, tipi_di_azioni);
 
             secondForm.Show();
+
+        }
+
+        private void label5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
 
         }
     }
