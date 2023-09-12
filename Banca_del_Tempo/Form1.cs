@@ -23,6 +23,8 @@ namespace Banca_del_Tempo
         List<Ricevuta> elenco_ricevute;
 
         string[] tipi_di_categorie = { "Piccoli lavori" , "Trasporto", "Cura di una persona", "Scolastico"};
+        string[] tipi_di_viste = { "Segreteria", "Persone indebitate","Bilancio categorie" };
+        string[] tipi_di_azioni = { "Esegui transizione", "Ricarica" , "Aggiungi utente" , "Elimina utente" };
         public Form1()
         {
             InitializeComponent();
@@ -531,6 +533,9 @@ namespace Banca_del_Tempo
 
         private void button3_Click(object sender, EventArgs e)
         {
+            Form2 secondForm = new Form2(tipi_di_viste, tipi_di_azioni);
+
+            secondForm.Show();
 
         }
     }
