@@ -377,9 +377,9 @@ namespace Banca_del_Tempo
 
                 bool result = Regex.IsMatch(telefono, regex);
 
-                if (result == true || telefono.Length!= 9)
+                if (result == true || telefono.Length!= 10 || telefono.Length != 11)
                 {
-                    MessageBox.Show("il numero di telefono deve contenere solo numeri e deve essere da 9 cifre");
+                    MessageBox.Show("il numero di telefono deve contenere solo numeri e deve essere da 10 o 11 cifre");
                     return false;
                 }
 
